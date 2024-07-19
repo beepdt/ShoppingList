@@ -3,8 +3,11 @@ package com.example.shoppinglistapp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,10 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,19 +37,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 
 
-
 data class ShoppingItem(val id:Int,
                         var name: String,
                         var quantity: Int,
-                        var isEditing: Boolean)
+                        var isEditing: Boolean = false)
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingList(){
 
     var sItems by remember { mutableStateOf(listOf<ShoppingItem>() ) }
     var showDialog by remember { mutableStateOf(false) }
+    var itemName by remember { mutableStateOf("") }
+    var itemQuantity by remember{ mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()){
 
@@ -94,20 +98,77 @@ fun ShoppingList(){
 
         //adding the list item window
         if (showDialog){
-            AlertDialog(onDismissRequest = { showDialog = false }) {
-                Card (
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    Text(text = "This Works")
-                }
-            }
+            AlertDialog(
+                onDismissRequest = { showDialog = false}, 
+                confirmButton = {
+                                Row(modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween) {
+
+                                    Button(
+                                        onClick = {
+                                                  if (itemName.isNotBlank() && itemQuantity.isNotBlank()){
+                                                      val newItem = ShoppingItem(
+                                                          id = sItems.size+1,
+                                                          name = itemName,
+                                                          quantity = itemQuantity.toInt()
+                                                      )
+                                                      sItems = sItems + newItem
+                                                      showDialog = false
+                                                      itemName = ""
+                                                      itemQuantity = ""
+                                                  }
+                                        },
+                                        modifier = Modifier.size(width = 96.dp, height = 48.dp)) {
+                                        Text(text = "Add")
+                                    }
+
+                                    Button(
+                                        onClick = { showDialog = false},
+                                        modifier = Modifier.size(width = 96.dp, height = 48.dp)) {
+                                        Text(text = "Cancel")
+                                    }
+                                }
+                },
+                tonalElevation = 16.dp,
+                title = { Text(text = "Add Shopping item")},
+                text = {
+                    Column {
+                        //items name
+                        OutlinedTextField(
+                            shape = RoundedCornerShape(8.dp),
+                            value = itemName,
+                            onValueChange = {itemName= it},
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = {Text(text = "Enter Item Name")}
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        //item quantity
+                        OutlinedTextField(
+                            shape = RoundedCornerShape(8.dp),
+                            value = itemQuantity,
+                            onValueChange = {itemQuantity= it},
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = {Text(text = "Enter Item Quantity")}
+                        )
+                    }
+                })
         }
 
     }
 }
 
 
+@Composable
+fun ShoppingListItem(
+    item: ShoppingItem,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+){
 
+}
 
 
 @Preview(showBackground = true)

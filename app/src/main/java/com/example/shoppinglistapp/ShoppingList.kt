@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -183,27 +184,25 @@ fun ShoppingListItem(
             .padding(8.dp)
     ){
         
-            Row (
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically) {
                 Text(text = item.name.capitalize(Locale.ROOT), modifier = Modifier.padding(8.dp))
                 Text(text = "QTY :", modifier = Modifier.padding(8.dp))
                 Text(text = item.quantity.toString(), modifier = Modifier.padding(8.dp))
 
-                Spacer(modifier = Modifier.width(24.dp))
+                Spacer(modifier = Modifier.width(88.dp))
 
-                Button(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.padding(8.dp).fillMaxHeight(),
-                    onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
-                }
+                Row {
+                    //edit element
+                    IconButton(onClick = { onEditClick }) {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
+                    }
 
-                Button(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.padding(8.dp).fillMaxHeight(),
-                    onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                    //delete element
+                    IconButton(onClick = { onDeleteClick }) {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                    }
                 }
             }
     }
